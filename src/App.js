@@ -34,6 +34,10 @@ class App extends PureComponent {
   // }
 
   /*
+  updateTasksDone(task) {}
+  */
+
+  /*
   onUsernameAdd = username => {};
   */
 
@@ -44,6 +48,10 @@ class App extends PureComponent {
     username: string,
   }
   addTodo = todoTitle => {};
+  */
+
+  /*
+  setTaskDone = todoId => {};
   */
 
   /*
