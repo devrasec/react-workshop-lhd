@@ -1,15 +1,10 @@
 import React from 'react';
 
-export default function TextInput({ label, name, placeholder }) {
+export default function TextInput({ label, ...restProps }) {
   return (
     <div className="form-group">
       <label>{label}</label>
-      <input
-        type="text"
-        name={name}
-        className="form-control"
-        placeholder={placeholder}
-      />
+      <input type="text" className="form-control" {...restProps} />
     </div>
   );
 }
