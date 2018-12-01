@@ -1,0 +1,13 @@
+.check-circle {
+  border: 1px solid var(--primary);
+  border-radius: 50%;
+  height: 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--checked {
+    background-color: var(--blue);
+  }
+}
