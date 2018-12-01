@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import TextInput from './TextInput';
 
 export default class UsernameForm extends Component {

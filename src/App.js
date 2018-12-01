@@ -4,11 +4,15 @@ import Check from './components/Check';
 import AddTodoForm from './components/AddTodoForm';
 
 const userNameKey = 'todo-username';
+const TODO_ALL = 'TODO_ALL';
+const TODO_ACTIVE = 'TODO_ACTIVE';
+const TODO_DONE = 'TODO_DONE';
 
 class App extends PureComponent {
   state = {
     todos: [],
-    username: ''
+    username: '',
+    nowShowing: TODO_ALL
   };
 
   componentDidMount() {
@@ -36,14 +40,28 @@ class App extends PureComponent {
   addToDo = todoTitle => {
     const todo = {
       title: todoTitle,
-      completed: false
+      completed: false,
+      username: this.state.username
     };
 
     this.setState(prevState => ({ todos: [...prevState.todos, todo] }));
   };
 
+  getToDos = () => {
+    const { nowShowing, todos } = this.state;
+
+    switch (nowShowing) {
+      case TODO_ACTIVE:
+        return todos.filter(todo => !todo.completed);
+      case TODO_DONE:
+        return todos.filter(todo => todo.completed);
+      default:
+        return todos;
+    }
+  };
+
   render() {
-    const { username, todos } = this.state;
+    const { username } = this.state;
 
     return (
       <div className="app container">
@@ -63,7 +81,7 @@ class App extends PureComponent {
             <AddTodoForm onAdd={this.addToDo} />
 
             <div>
-              {todos.map((todo, index) => (
+              {this.getToDos().map((todo, index) => (
                 <div
                   key={index}
                   className="card mb-3 shadow-sm rounded border-light"
@@ -84,6 +102,12 @@ class App extends PureComponent {
                         </button>
                       </div>
                     </div>
+                  </div>
+
+                  <div className="card-footer">
+                    <small className="text-muted">
+                      Creado por {todo.username}
+                    </small>
                   </div>
                 </div>
               ))}

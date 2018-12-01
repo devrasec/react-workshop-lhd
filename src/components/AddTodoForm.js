@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import classNames from 'classnames';
 
 export default class AddTodoForm extends Component {
   state = {
@@ -11,10 +12,12 @@ export default class AddTodoForm extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    const { todoTitle } = this.state;
 
-    this.props.onAdd(this.state.todoTitle);
-
-    this.setState({ todoTitle: '' });
+    if (todoTitle.trim()) {
+      this.props.onAdd(todoTitle);
+      this.setState({ todoTitle: '' });
+    }
   };
 
   render() {
