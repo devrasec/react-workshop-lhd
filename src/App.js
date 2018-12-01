@@ -73,10 +73,10 @@ class App extends PureComponent {
 
         {username && (
           <>
-            <div class="jumbotron">
-              <div class="container">
-                <h1 class="display-4">Hola, {username}!</h1>
-                <p class="lead">
+            <div className="jumbotron">
+              <div className="container">
+                <h1 className="display-4">Hola, {username}!</h1>
+                <p className="lead">
                   Ahora puedes agregar las cosas que tienes pendientes de hacer.
                 </p>
               </div>
