@@ -60,8 +60,12 @@ class App extends PureComponent {
     }
   };
 
+  changeToDoFilter = filterBy => {
+    this.setState({ nowShowing: filterBy });
+  };
+
   render() {
-    const { username } = this.state;
+    const { username, nowShowing } = this.state;
 
     return (
       <div className="app container">
@@ -79,6 +83,40 @@ class App extends PureComponent {
             </div>
 
             <AddTodoForm onAdd={this.addToDo} />
+
+            <div className="btn-toolbar mb-3">
+              <div className="btn-group">
+                <button
+                  type="button"
+                  className={`btn ${
+                    nowShowing === TODO_ALL ? 'btn-dark' : 'btn-light'
+                  }`}
+                  onClick={() => this.changeToDoFilter(TODO_ALL)}
+                >
+                  Todas
+                </button>
+
+                <button
+                  type="button"
+                  className={`btn ${
+                    nowShowing === TODO_ACTIVE ? 'btn-dark' : 'btn-light'
+                  }`}
+                  onClick={() => this.changeToDoFilter(TODO_ACTIVE)}
+                >
+                  Activas
+                </button>
+
+                <button
+                  type="button"
+                  className={`btn ${
+                    nowShowing === TODO_DONE ? 'btn-dark' : 'btn-light'
+                  }`}
+                  onClick={() => this.changeToDoFilter(TODO_DONE)}
+                >
+                  Terminadas
+                </button>
+              </div>
+            </div>
 
             <div>
               {this.getToDos().map((todo, index) => (
