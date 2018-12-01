@@ -1,43 +1,37 @@
 import React, { Component } from 'react';
 import TextInput from './TextInput';
 
+/*
+ props:
+
+ onSubmit: Function(username)
+
+*/
+
 export default class UsernameForm extends Component {
   state = {
     username: '',
     error: ''
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    const { username } = this.state;
+  /*
+  // validate username, must be required.
+  handleSubmit = event => {};
+  */
 
-    if (!username.trim()) {
-      this.setState({
-        error: 'El nombre de usuario es requerido',
-        username: ''
-      });
-    } else {
-      this.props.onSubmit(this.state.username);
-    }
-  };
-
-  handleChange = event => {
-    this.setState({ username: event.target.value, error: '' });
-  };
+  /*
+  // Handling input onChange event.
+  handleChange = event => {};
+  */
 
   render() {
-    const { username, error } = this.state;
-
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form>
         <div className="mb-4">
           <TextInput
             label="Nombre de usuario"
             name="username"
-            value={username}
             placeholder="¿Cómo te llaman tus amigos?"
-            onChange={this.handleChange}
-            error={error}
           />
 
           <button type="submit" className="btn btn-primary">
