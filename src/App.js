@@ -1,23 +1,53 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import UsernameForm from './components/UsernameForm';
 import Check from './components/Check';
 import AddTodoForm from './components/AddTodoForm';
+import {
+  subscribeToTaskCreated,
+  subscribeToTaskDone,
+  getAllTasks,
+  addTask,
+  taskDone
+} from './services/api';
+import findIndex from 'lodash/findIndex';
 
 const userNameKey = 'todo-username';
 const TODO_ALL = 'TODO_ALL';
 const TODO_ACTIVE = 'TODO_ACTIVE';
 const TODO_DONE = 'TODO_DONE';
 
-class App extends PureComponent {
+class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.updateTasksDone = this.updateTasksDone.bind(this);
+  }
+
   state = {
     todos: [],
     username: '',
     nowShowing: TODO_ALL
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     if (sessionStorage.getItem(userNameKey) !== null) {
       this.setState({ username: sessionStorage.getItem(userNameKey) });
+    }
+
+    subscribeToTaskCreated(task => {
+      this.setState(prevState => ({ todos: [...prevState.todos, task] }));
+    });
+
+    subscribeToTaskDone(task => {
+      this.updateTasksDone(task);
+    });
+
+    try {
+      const response = await getAllTasks();
+
+      this.setState({ todos: response.data });
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -33,18 +63,36 @@ class App extends PureComponent {
     }
   }
 
+  updateTasksDone(task) {
+    const { todos } = this.state;
+
+    const todoIndex = findIndex(todos, t => t._id === task._id);
+
+    if (todoIndex >= 0) {
+      const newTodos = todos;
+      newTodos[todoIndex] = { ...todos[todoIndex], done_at: task.done_at };
+      console.log(newTodos[todoIndex]);
+
+      this.setState({ todos: newTodos });
+    }
+  }
+
   onUsernameAdd = username => {
     this.setState({ username, userNameAdded: true });
   };
 
-  addToDo = todoTitle => {
-    const todo = {
+  addToDo = async todoTitle => {
+    const task = {
       title: todoTitle,
-      completed: false,
-      username: this.state.username
+      userName: this.state.username
     };
 
-    this.setState(prevState => ({ todos: [...prevState.todos, todo] }));
+    try {
+      const response = await addTask(task);
+      console.log('task added: ', response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   getToDos = () => {
@@ -52,11 +100,19 @@ class App extends PureComponent {
 
     switch (nowShowing) {
       case TODO_ACTIVE:
-        return todos.filter(todo => !todo.completed);
+        return todos.filter(todo => !todo.done_at);
       case TODO_DONE:
-        return todos.filter(todo => todo.completed);
+        return todos.filter(todo => todo.done_at);
       default:
         return todos;
+    }
+  };
+
+  setTaskDone = async todoId => {
+    try {
+      const response = taskDone(todoId);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -121,13 +177,18 @@ class App extends PureComponent {
             <div>
               {this.getToDos().map((todo, index) => (
                 <div
-                  key={index}
+                  key={todo._id}
                   className="card mb-3 shadow-sm rounded border-light"
                 >
                   <div className="card-body">
                     <div className="row align-items-center">
                       <div className="col-2 col-sm-1">
-                        <Check />
+                        <button
+                          className="btn btn-light"
+                          onClick={() => this.setTaskDone(todo._id)}
+                        >
+                          <Check checked={!!todo.done_at} />
+                        </button>
                       </div>
                       <div className="col-8 col-sm">{todo.title}</div>
                       <div className="col-2 col-sm-1">
@@ -144,7 +205,7 @@ class App extends PureComponent {
 
                   <div className="card-footer">
                     <small className="text-muted">
-                      Creado por {todo.username}
+                      Creado por {todo.created_by}
                     </small>
                   </div>
                 </div>
